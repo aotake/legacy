@@ -21,11 +21,11 @@ if (isset($_POST['default_theme']) && preg_match("/^\w+$/", $_POST['default_them
 }
 
 $hd_query = array(
-	sprintf('update %s set conf_value="%s" where conf_name="theme_set" limit 1',
+	sprintf("update %s set conf_value='%s' where conf_name='theme_set'",
 			$dbm->db->prefix('config'), $default_theme),
-	sprintf('update %s set conf_value=\'%s\' where conf_name="theme_set_allowed" limit 1',
+	sprintf("update %s set conf_value='%s' where conf_name='theme_set_allowed'",
 			$dbm->db->prefix('config'), serialize($available_themes)),
-	sprintf('update %s set theme="%s" where uid =1 limit 1',
+	sprintf("update %s set theme='%s' where uid =1",
 			$dbm->db->prefix('users'), $default_theme),
 	);
 

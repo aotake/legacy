@@ -29,7 +29,7 @@ function altsys_oninstall_base( $module , $mydirname )
 	/*************** END ALTSYS SPECIFIC PART ******************/
 
 	// TABLES (loading mysql.sql)
-	$sql_file_path = dirname(__FILE__).'/sql/mysql.sql' ;
+	$sql_file_path = dirname(__FILE__).'/sql/'.XOOPS_DB_TYPE.'.sql' ;
 	$prefix_mod = $db->prefix() . '_' . $mydirname ;
 	if( file_exists( $sql_file_path ) ) {
 		$ret[] = "SQL file found at <b>".htmlspecialchars($sql_file_path)."</b>.<br /> Creating tables...";

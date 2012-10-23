@@ -70,6 +70,7 @@ class MessageInboxHandler extends XoopsObjectGenericHandler
     $sql.= "WHERE i.`from_uid` = u.`uid` ";
     $sql.= "AND i.`uid` = ".$uid." ";
     $sql.= "GROUP BY u.`uname`, u.`uid`";
+    $sql = StrUtil::myDbQuote($sql);
     
     $result = $this->db->query($sql);
     while ($row = $this->db->fetchArray($result)) {
@@ -96,6 +97,7 @@ class MessageInboxHandler extends XoopsObjectGenericHandler
     } else {
       $sql.= "AND `is_read` < 2 ";
     }
+    $sql = StrUtil::myDbQuote($sql);
     $this->db->queryF($sql);
   }
   
