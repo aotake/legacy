@@ -231,7 +231,11 @@ class QuickManageBlock extends XCube_ActionFilter
 		}
 
 		$db =& Database::getInstance();
-		$sqlBase  = "SELECT `bid`, `block_type` FROM `%s` WHERE `bid` IN (%s)";
+        if(XOOPS_DB_TYPE == "pdo_pgsql"){
+		    $sqlBase  = 'SELECT "bid", "block_type" FROM "%s" WHERE bid IN (%s)';
+        } else {
+		    $sqlBase  = "SELECT `bid`, `block_type` FROM `%s` WHERE `bid` IN (%s)";
+        }
 		$table    = $db->prefix('newblocks');
 		$blockIds = array_map('intval', $blockIds);
 		$blockIds = implode(', ', $blockIds);
