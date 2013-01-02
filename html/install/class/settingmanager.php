@@ -149,6 +149,8 @@ class setting_manager {
             $this->dbpass = XOOPS_DB_PASS;
         if(defined('XOOPS_DB_NAME'))
             $this->dbname = XOOPS_DB_NAME;
+        if(defined('XOOPS_DB_PORT'))
+            $this->dbport = XOOPS_DB_PORT;
         if(defined('XOOPS_DB_PREFIX'))
             $this->prefix = XOOPS_DB_PREFIX;
         if(defined('XOOPS_DB_PCONNECT'))
