@@ -68,32 +68,20 @@ class XoopsPdoPgsqlDatabase extends XoopsPdoDatabase
 	 */
 	function connect($selectdb = true)
 	{
-        ini_set("include_path", ini_get("include_path").":".XOOPS_TRUST_PATH."/libs");
-        require_once XOOPS_TRUST_PATH."/libs/Zend/Db.php";
-        require_once XOOPS_TRUST_PATH."/libs/Zend/Db/Table/Abstract.php";
+        $port = defined("XOOPS_DB_PORT") ? XOOPS_DB_PORT : 5432;
 
-        $opt_arr = array(
-            "host" => XOOPS_DB_HOST,
-            "username" => XOOPS_DB_USER,
-            "password" => XOOPS_DB_PASS,
-            "dbname" => XOOPS_DB_NAME,
-            "charset" => XOOPS_DB_CHARSET,
-            "port" => defined("XOOPS_DB_PORT") ? XOOPS_DB_PORT : 5432,
-        );
+        $dsn = "pgsql:host=" . XOOPS_DB_HOST.";";
+        $dsn.= "port=". $port . ";";
+        $dsn.= "dbname=" . XOOPS_DB_NAME . ";";
+        //$dsn.= "charset=" . XOOPS_DB_CHARSET . ";";
+        $dsn.= "user=" . XOOPS_DB_USER . ";";
+        $dsn.= "password=" . XOOPS_DB_PASS;
 
         try {
-            $zdb_adapter = Zend_Db::factory("Pdo_Pgsql", $opt_arr);
-            $conn = $zdb_adapter->getConnection();
-            if(is_null($conn)){
-			    $this->logger->addQuery('', $this->error(), $this->errno());
-                return false;
-            }
-            $zdb_adapter->getProfiler()->setEnabled(true);
-            Zend_Db_Table_Abstract::setDefaultAdapter($zdb_adapter);
-            $this->conn = $zdb_adapter;
+            $this->conn = new PDO($dsn);
             return true;
         }
-        catch(Exception $e){
+        catch(PDOException $e){
             $this->result = $e;
 			$this->logger->addQuery('', $this->error(), $this->errno());
             //$logger->crit($e->getMessage());
@@ -113,8 +101,10 @@ class XoopsPdoPgsqlDatabase extends XoopsPdoDatabase
 	function genId($sequence)
 	{
         $seqName = $this->prefix($sequence);
-        $result = $this->conn->query("select nextval('$seqName')");;
-        $res = $this->fetchRow($result);
+        $sth = $this->conn->prepare("select nextval('$seqName')");;
+        $sth->execute();
+
+        $res = $sth->fetch(PDO::FETCH_NUM);
         return (int)$res[0];
 	}
 
@@ -126,10 +116,11 @@ class XoopsPdoPgsqlDatabase extends XoopsPdoDatabase
 	function getInsertId()
 	{
         try {
-    	    $result = $this->conn->query("SELECT LASTVAL()");
-            $row = $result->fetch();
+    	    $sth = $this->conn->prepare("SELECT LASTVAL()");
+            $sth->execute();
+            $row = $sth->fetch( PDO::FETCH_ASSOC );
             return (int)$row["lastval"];
-        } catch(Exception $e) {
+        } catch(PDOException $e) {
             // nextval() を使わない INSERT 時は lastval() できず
             //      ERROR: lastval is not yet defined in this session
             // というエラーを吐く。

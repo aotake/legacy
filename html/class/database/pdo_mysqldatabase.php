@@ -68,10 +68,6 @@ class XoopsPdoMysqlDatabase extends XoopsPdoDatabase
 	 */
 	function connect($selectdb = true)
 	{
-        ini_set("include_path", ini_get("include_path").":".XOOPS_TRUST_PATH."/libs");
-        require_once XOOPS_TRUST_PATH."/libs/Zend/Db.php";
-        require_once XOOPS_TRUST_PATH."/libs/Zend/Db/Table/Abstract.php";
-
         switch(XOOPS_DB_CHARSET){
         case "EUC-JP":
             $charset = "ujis";
@@ -81,30 +77,19 @@ class XoopsPdoMysqlDatabase extends XoopsPdoDatabase
             $charset = "utf8";
             break;
         }
-        $charset = 
 
-        $opt_arr = array(
-            "host" => XOOPS_DB_HOST,
-            "username" => XOOPS_DB_USER,
-            "password" => XOOPS_DB_PASS,
-            "dbname" => XOOPS_DB_NAME,
-            "charset" => $charset,
-            "port" => defined("XOOPS_DB_PORT") ? XOOPS_DB_PORT : 5432,
-        );
+        $port = defined("XOOPS_DB_PORT") ? XOOPS_DB_PORT : 3306;
+
+        $dsn = "mysql:host=" . XOOPS_DB_HOST.";";
+        $dsn.= "port=". $port . ";";
+        $dsn.= "dbname=" . XOOPS_DB_NAME . ";";
+        $dsn.= "charset=" . XOOPS_DB_CHARSET . "";
 
         try {
-            $zdb_adapter = Zend_Db::factory("Pdo_Mysql", $opt_arr);
-            $conn = $zdb_adapter->getConnection();
-            if(is_null($conn)){
-			    $this->logger->addQuery('', $this->error(), $this->errno());
-                return false;
-            }
-            $zdb_adapter->getProfiler()->setEnabled(true);
-            Zend_Db_Table_Abstract::setDefaultAdapter($zdb_adapter);
-            $this->conn = $zdb_adapter;
+            $this->conn = new PDO($dsn, XOOPS_DB_USER, XOOPS_DB_PASS);
             return true;
         }
-        catch(Exception $e){
+        catch(PDOException $e){
             $this->result = $e;
 			$this->logger->addQuery('', $this->error(), $this->errno());
             //$logger->crit($e->getMessage());

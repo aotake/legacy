@@ -80,7 +80,7 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function connect($selectdb = true)
     {
-        throw new Zend_Exception("継承したクラスで connect() を実装してください");
+        throw new Exception("継承したクラスで connect() を実装してください");
     }
 
 	/**
@@ -94,7 +94,7 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function genId($sequence)
     {
-        throw new Zend_Exception("継承したクラスで genId() を実装してください");
+        throw new Exception("継承したクラスで genId() を実装してください");
     }
 
 	/**
@@ -103,11 +103,11 @@ class XoopsPdoDatabase extends XoopsDatabase
      * @param resource $result
      * @return array
 	 */
-	function fetchRow($result)
+	function fetchRow($sth)
 	{
 		//return @mysql_fetch_row($result);
-        if($result instanceof Zend_Db_Statement_Pdo){
-    		return $result->fetch(PDO::FETCH_NUM);
+        if ( $sth instanceof PDOStatement ) {
+    		return $sth->fetch(PDO::FETCH_NUM);
         } else {
             return 0;
         }
@@ -118,11 +118,11 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 *
      * @return array
 	 */
-	function fetchArray($result)
+	function fetchArray($sth)
     {
         //return @mysql_fetch_assoc( $result );
-        if($result instanceof Zend_Db_Statement_Pdo){
-            return $result->fetch();
+        if ( $sth instanceof PDOStatement ) {
+            return $sth->fetch( PDO::FETCH_ASSOC );
         } else {
             return array();
         }
@@ -131,14 +131,14 @@ class XoopsPdoDatabase extends XoopsDatabase
     /**
      * Fetch a result row as an associative array
      *
-     * @param Zend_Db_Statement_Pdo
+     * @param PDOStatement
      * @return array
      */
-    function fetchBoth($result)
+    function fetchBoth($sth)
     {
         //return @mysql_fetch_array( $result, MYSQL_BOTH );
-        if($result instanceof Zend_Db_Statement_Pdo){
-            return $result->fetch(Zend_Db::FETCH_BOTH);
+        if($sth instanceof PDOStatement){
+            return $sth->fetch( PDO::FETCH_BOTH );
         } else {
             return array();
         }
@@ -151,18 +151,18 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function getInsertId()
 	{
-        throw new Zend_Exception("継承したクラスで getInsertId() を実装してください");
+        throw new Exception("継承したクラスで getInsertId() を実装してください");
 	}
 
 	/**
 	 * Get number of rows in result
 	 * 
-     * @param Zend_Db_Statement_Pdo
+     * @param PDOStatement
      * @return int
 	 */
-	function getRowsNum($result)
+	function getRowsNum($sth)
 	{
-		return $result->rowCount();
+		return $sth->rowCount();
 	}
 
 	/**
@@ -172,7 +172,7 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function getAffectedRows()
 	{
-        // $this->result = Zend_Db_Statement_Pdo
+        // $this->result = PDOStatement
         return $this->result->rowCount();
 	}
 
@@ -189,7 +189,7 @@ class XoopsPdoDatabase extends XoopsDatabase
 	/**
 	 * will free all memory associated with the result identifier result.
 	 * 
-     * @param Zend_Db_Statement_Pdo obuject
+     * @param PDOStatement obuject
      * @return bool TRUE on success or FALSE on failure. 
 	 */
 	function freeRecordSet($result)
@@ -204,7 +204,7 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function error()
 	{
-        if($this->result instanceof Zend_Exception){
+        if($this->result instanceof PDOException){
             return $this->result->getMessage();
         } else {
 		    return $this->result->errorInfo();
@@ -218,10 +218,10 @@ class XoopsPdoDatabase extends XoopsDatabase
 	 */
 	function errno()
 	{
-        if($this->result instanceof Zend_Exception){
+        if($this->result instanceof PDOException){
             return 255;// TODO: ダミーで 255 としてるけどエラーの個数を返したいところ？
         }
-        else if ($this->result instanceof Zend_Db_Statement_Pdo) {
+        else if ($this->result instanceof PDOStatement) {
             return $this->result->errorCode();
         }
         else {
