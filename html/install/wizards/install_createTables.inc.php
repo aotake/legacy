@@ -12,7 +12,8 @@
     $dbm = new db_manager;
 
     $tables = array();
-    $result = $dbm->queryFromFile('./sql/'.XOOPS_DB_TYPE.'.structure.sql');
+    $dbtype = XOOPS_DB_TYPE == "pdo_mysql" ? "mysql" : XOOPS_DB_TYPE;
+    $result = $dbm->queryFromFile('./sql/'.$dbtype.'.structure.sql');
     $wizard->assign('reports',$dbm->report());
     if(! $result ){
         $wizard->assign('message',_INSTALL_L114);
