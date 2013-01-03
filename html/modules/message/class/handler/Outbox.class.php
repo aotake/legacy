@@ -42,6 +42,7 @@ class MessageOutboxHandler extends XoopsObjectGenericHandler
     $time = time() - ($day * 86400);
     $sql = "DELETE FROM `".$this->mTable."` ";
     $sql.= "WHERE `utime` < ".$time;
+    $sql = StrUtil::myDbQuote($sql);
     $this->db->queryF($sql);
   }
 
@@ -53,6 +54,7 @@ class MessageOutboxHandler extends XoopsObjectGenericHandler
     $sql.= "WHERE i.`to_uid` = u.`uid` ";
     $sql.= "AND i.`uid` = ".$uid." ";
     $sql.= "GROUP BY u.`uname`, u.`uid`";
+    $sql = StrUtil::myDbQuote($sql);
     
     $result = $this->db->query($sql);
     while ($row = $this->db->fetchArray($result)) {

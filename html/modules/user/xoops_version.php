@@ -26,7 +26,7 @@
 //  ------------------------------------------------------------------------ //
 
 $modversion['name'] = _MI_USER_NAME;
-$modversion['version'] = 2.02;
+$modversion['version'] = 2.01;
 $modversion['description'] = _MI_USER_NAME_DESC;
 $modversion['author'] = "";
 $modversion['credits'] = "XOOPS Cube Project";
@@ -39,6 +39,7 @@ $modversion['cube_style'] = true;
 
 // SQL
 $modversion['sqlfile']['mysql'] = "sql/mysql.sql";
+$modversion['sqlfile']['pdo_pgsql'] = "sql/pgsql.sql";
 
 // Tables created by sql file (without prefix!)
 $modversion['tables'][0] = "{prefix}_{dirname}_mailjob";
